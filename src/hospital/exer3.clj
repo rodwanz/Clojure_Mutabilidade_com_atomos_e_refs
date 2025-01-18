@@ -28,11 +28,42 @@
 
     ;INDO PRO SWAP
     (swap! hospital-dois update :laboratorio1 conj "111")
-    (pprint @hospital-dois)
+    (pprint @hospital-dois)))
+;(teste-atomico)
 
 
+(defn chega-em-malvado! [hospital pessoa]
+  (swap! hospital h.logic/chega-em-pausado-logando :espera pessoa)
+  (println "apos inserir" pessoa))
+
+(defn simula-um-dia-em-paralelo []
+    (let [hospital (atom (h.model/novo-hospital))]
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "111"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "222"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "333"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "444"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "555"))))
+    (.start (Thread. (fn [] (chega-em-malvado! hospital "666"))))
+    (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
+
+;FORÇANDO SITUAÇÕES DE RETRY
+;(simula-um-dia-em-paralelo)
 
 
-    ))
-(teste-atomico)
+(defn chega-sem-malvado! [hospital pessoa]
+  (swap! hospital h.logic/chega-em :espera pessoa)
+  (println "apos inserir" pessoa))
+
+(defn simula-um-dia-em-paralelo []
+  (let [hospital (atom (h.model/novo-hospital))]
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "111"))))
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "222"))))
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "333"))))
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "444"))))
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "555"))))
+    (.start (Thread. (fn [] (chega-sem-malvado! hospital "666"))))
+    (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
+
+;SEM FORÇAR SITUAÇÃO DE RETRY, PODE OU NÃO ACONTECER
+(simula-um-dia-em-paralelo)
 
