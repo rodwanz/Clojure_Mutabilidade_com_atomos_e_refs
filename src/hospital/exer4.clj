@@ -76,7 +76,48 @@
     (mapv starta pessoas)
     (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
 
-(simula-um-dia-em-paralelo-com-partial)
+;(simula-um-dia-em-paralelo-com-partial)
+
+
+
+(defn starta-thread-de-chegada
+  ([hospital pessoa]
+   (.start (Thread. (fn [] (chega-sem-malvado! hospital pessoa))))))
+
+(defn simula-um-dia-em-paralelo-com-doseq []
+  "Aqui estou preocupado em executar para os elementos da sequência"
+  (let [hospital (atom (h.model/novo-hospital))
+        pessoas ["111" "222" "333" "444" "555" "666"]]
+
+    (doseq [pessoa pessoas]
+      (starta-thread-de-chegada hospital pessoa))
+    (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
+
+;(simula-um-dia-em-paralelo-com-doseq)
+
+
+
+(defn simula-um-dia-em-paralelo-com-doseq []
+  (let [hospital (atom (h.model/novo-hospital))
+        pessoas (range 6)]
+
+    (doseq [pessoa pessoas]
+      (starta-thread-de-chegada hospital pessoa))
+    (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
+
+;(simula-um-dia-em-paralelo-com-doseq)
+
+
+
+(defn simula-um-dia-em-paralelo-com-dotimes []
+  "Estou preocupado que execute N vezes"
+  (let [hospital (atom (h.model/novo-hospital))]
+
+    (dotimes [pessoa 6]
+      (starta-thread-de-chegada hospital pessoa))
+    (.start (Thread. (fn [] (Thread/sleep 8000) (pprint hospital))))))
+
+(simula-um-dia-em-paralelo-com-dotimes)
 
 
 
